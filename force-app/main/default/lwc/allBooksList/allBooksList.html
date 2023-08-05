@@ -1,0 +1,28 @@
+<template>
+    <lightning-card title="Book List">
+        <div class="slds-p-around_medium">
+            <table class="slds-table slds-table_bordered slds-table_fixed-layout">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{receivedMessage}</td>
+                        <td>{receivedMessage}</td>
+                        <td>{receivedMessage}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- <lightning-datatable
+                key-field="id"
+                data={bookList}
+                columns={columns}
+                onrowselection={handleRowSelection}>
+            </lightning-datatable> -->
+        </div>
+    </lightning-card>
+</template>
