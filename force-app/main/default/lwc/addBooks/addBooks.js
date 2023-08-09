@@ -42,9 +42,9 @@ export default class AddBooks extends LightningElement {
         this.resetFormFields();
     }
 
-    // resetFormFields() {
-    //     this.title = '';
-    //     this.author = '';
-    //     this.status = 'Not Read';
-    // }
+    resetFormFields() {
+        this.title = '';
+        this.author = '';
+        this.status = 'Not Read';
+    }
 }
