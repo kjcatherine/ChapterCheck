@@ -58,7 +58,11 @@ export default class AllBooksList extends LightningElement {
     }
 
     handleFormMessage(message){
-        this.receivedMessage = message.title.value ? message.title.value : "No message published"
+        this.receivedMessage = { 
+            title: message.title.value ? message.title.value : "No title",
+            author: message.author.value ? message.author.value : "No author",
+            status: message.status.value ? message.status.value : "No status"
+    }
     }
    
 
