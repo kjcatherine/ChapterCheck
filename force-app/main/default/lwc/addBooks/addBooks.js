@@ -5,7 +5,7 @@ export default class AddBooks extends LightningElement {
     @wire(MessageContext)
     context
 
-   title = '';
+    title = '';
     author = '';
     status = 'Not Read';
 
@@ -27,18 +27,24 @@ export default class AddBooks extends LightningElement {
     }
 
     handleSubmit() {
-        const message={
-            title:{
-                value:this.title
-            },
-            author:{
-                value:this.author
-            },
-            status:{
-                value:this.status
-            }
-        }
-        publish(this.context, BOOKCHANNEL, message)
+        handleSubmit() {
+            const message = {
+                title: this.title,
+                author: this.author,
+                status: this.status
+            };
+        // const message={
+        //     title:{
+        //         value:this.title
+        //     },
+        //     author:{
+        //         value:this.author
+        //     },
+        //     status:{
+        //         value:this.status
+        //     }
+        // }
+        publish(this.context, BOOKCHANNEL, {message})
         this.resetFormFields();
     }
 
@@ -47,4 +53,5 @@ export default class AddBooks extends LightningElement {
         this.author = '';
         this.status = 'Not Read';
     }
+}
 }

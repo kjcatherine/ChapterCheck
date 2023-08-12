@@ -1,51 +1,17 @@
 import { LightningElement, wire} from 'lwc';
 import BOOKCHANNEL from '@salesforce/messageChannel/BooksChannel__c'
-import { APPLICATION_SCOPE, MessageContext, subscribe} from 'lightning/messageService';
-// const columns = [
-//     { label: 'Title', fieldName: 'title' },
-//     { label: 'Author', fieldName: 'author' },
-//     { label: 'Status', fieldName: 'status' },
-//     {
-//         type: 'button',
-//         initialWidth: 100,
-//         typeAttributes: { label: 'Delete', variant: 'destructive', name: 'delete' },
-//     },
-// ];
+import { APPLICATION_SCOPE, MessageContext, subscribe} from 'lightning/messageService'
 
 export default class AllBooksList extends LightningElement {
-
-    receivedMessage
+    receivedMessage = {
+        title: '',
+        author: '',
+        status: ''
+    };
     subscription
 
     @wire(MessageContext)
     context
-
-   
-
-    // bookList = [];
-    // columns = columns;
-
-    // handleRowSelection(event) {
-    //     const selectedRows = event.detail.selectedRows;
-    //     const actionName = event.detail.action.name;
-
-    //     if (actionName === 'delete') {
-    //         // Delete selected rows
-    //         this.deleteSelectedRows(selectedRows);
-    //     }
-    // }
-
-    // deleteSelectedRows(selectedRows) {
-    //     const updatedBookList = [...this.bookList];
-
-    //     selectedRows.forEach((selectedRow) => {
-    //         const indexToRemove = updatedBookList.findIndex((book) => book.id === selectedRow.id);
-    //         if (indexToRemove !== -1) {
-    //             updatedBookList.splice(indexToRemove, 1);
-    //             this.bookList = updatedBookList;
-    //         }
-    //     });
-    // }
 
     connectedCallback() {
         this.handleFormSubmit()
@@ -58,9 +24,17 @@ export default class AllBooksList extends LightningElement {
     }
 
     handleFormMessage(message){
-        this.receivedMessage = message.title.value ? message.title.value : "No title",
-        message.author.value ? message.author.value : "No author",
-        message.status.value ? message.status.value : "No status"
+        if (message) {
+            // Update the receivedMessage object with the received data
+            this.receivedMessage = {
+                title: message.title.value,
+                author: message.author.value,
+                status: message.status.value
+            };
+        }
+        //this.receivedMessage = message.title.value ? message.title.value : "No title"
+        // message.author.value ? message.author.value : "No author",
+        // message.status.value ? message.status.value : "No status"
     }
     }
    
@@ -68,4 +42,3 @@ export default class AllBooksList extends LightningElement {
     // disconnectedCallback() {
     //     window.removeEventListener('submit', this.handleFormSubmit);
     // }
-}
