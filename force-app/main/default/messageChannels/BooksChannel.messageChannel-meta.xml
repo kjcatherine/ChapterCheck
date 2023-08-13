@@ -4,11 +4,11 @@
     <isExposed>true</isExposed>
     <description>Message Channel to pass data</description>
     <lightningMessageFields>
-        <fieldName>title</fieldName>
-        <description>This is the title field to pass data</description>
+        <fieldName>lmsData</fieldName>
+        <description>This is the data field to pass data</description>
     </lightningMessageFields>
 
-    <lightningMessageFields>
+    <!-- <lightningMessageFields>
         <fieldName>author</fieldName>
         <description>This is the author field to pass data</description>
     </lightningMessageFields>
@@ -16,5 +16,5 @@
     <lightningMessageFields>
         <fieldName>status</fieldName>
         <description>This is the status field to pass data</description>
-    </lightningMessageFields>
+    </lightningMessageFields> -->
 </LightningMessageChannel>

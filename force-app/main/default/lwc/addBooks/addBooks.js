@@ -25,26 +25,16 @@ export default class AddBooks extends LightningElement {
     handleStatusChange(event) {
         this.status = event.detail.value;
     }
-
+    
     handleSubmit() {
-        handleSubmit() {
-            const message = {
-                title: this.title,
-                author: this.author,
-                status: this.status
-            };
-        // const message={
-        //     title:{
-        //         value:this.title
-        //     },
-        //     author:{
-        //         value:this.author
-        //     },
-        //     status:{
-        //         value:this.status
-        //     }
-        // }
-        publish(this.context, BOOKCHANNEL, {message})
+        const message={
+            lmsData:{
+                title: { value: this.title },
+                author: { value: this.author },
+                status: { value: this.status }
+            }
+        }
+        publish(this.context, BOOKCHANNEL, message)
         this.resetFormFields();
     }
 
@@ -53,5 +43,4 @@ export default class AddBooks extends LightningElement {
         this.author = '';
         this.status = 'Not Read';
     }
-}
 }
