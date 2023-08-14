@@ -2,13 +2,22 @@ import { LightningElement, wire} from 'lwc';
 import BOOKCHANNEL from '@salesforce/messageChannel/BooksChannel__c'
 import { APPLICATION_SCOPE, MessageContext, subscribe} from 'lightning/messageService'
 
+const columns = [
+    { label: 'Title', fieldName: 'title' },
+    { label: 'Author', fieldName: 'author' },
+    { label: 'Status', fieldName: 'status' },
+];
+
 export default class AllBooksList extends LightningElement {
-    receivedMessage = {
-        title: '',
-        author: '',
-        status: ''
-    };
+
+    columns = columns
+    bookList = []
     subscription
+    // receivedMessage = {
+    //     title: '',
+    //     author: '',
+    //     status: ''
+    // };
 
     @wire(MessageContext)
     context
@@ -25,14 +34,16 @@ export default class AllBooksList extends LightningElement {
 
     handleFormMessage(message){
         if (message) {
-            this.receivedMessage = {
-                title: message.lmsData.title.value || '',
-                author: message.lmsData.author.value || '',
-                status: message.lmsData.status.value || ''
-            };
-        }
+            const { title, author, status } = message.lmsData;
+            this.bookList.push({
+                title: title.value || '',
+                author: author.value || '',
+                status: status.value || ''
+            });
         }
     }
+    }
+    
    
 
     // disconnectedCallback() {
