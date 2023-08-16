@@ -1,6 +1,11 @@
-import { LightningElement, wire} from 'lwc';
+import { LightningElement, wire, track, api} from 'lwc';
 import BOOKCHANNEL from '@salesforce/messageChannel/BooksChannel__c'
 import { APPLICATION_SCOPE, MessageContext, subscribe} from 'lightning/messageService'
+
+const actions = [
+    { label: 'Edit', name: 'Edit', iconName: 'utility:edit' },
+    { label: 'Delete', name: 'Delete' },
+];
 
 const columns = [
     { 
@@ -18,18 +23,36 @@ const columns = [
         fieldName: 'status',
         sortable: true,
     },
-    { label: 'Delete', fieldName: '', cellAttributes: {iconName: 'action:delete', alignment: 'center'} },
-    { label: 'Edit', fieldName: '', cellAttributes: {iconName: 'action:edit', alignment: 'center'} },
+    {
+        type: 'button-icon',
+        initialWidth: 34,
+        typeAttributes:
+        {
+            iconName: 'utility:delete',
+            name: 'delete',
+            iconClass: 'slds-icon-text-error'
+        }
+    },
+    {
+        type: 'button-icon',
+        initialWidth: 34,
+        typeAttributes:
+        {
+            iconName: 'utility:edit',
+            name: 'edit'
+        }
+    }
 ];
 
 export default class AllBooksList extends LightningElement {
 
     columns = columns
+    
     bookList = []
     subscription
     sortDirection
     sortedBy
-
+    
     @wire(MessageContext)
     context
 
@@ -39,8 +62,6 @@ export default class AllBooksList extends LightningElement {
 
     handleFormSubmit() {
         this.subscription = subscribe(this.context, BOOKCHANNEL, (message)=>{this.handleFormMessage(message)}, {scope:APPLICATION_SCOPE})
-        // book.id = Date.now(); // Using Date.now() to create a unique identifier
-        // this.bookList = [...this.bookList, book];
     }
 
     handleFormMessage(message){
@@ -80,35 +101,5 @@ export default class AllBooksList extends LightningElement {
         this.bookList = parseData;
         //[...this.bookList] = parseData;
     }    
-    //Sort logic
-    // sortBy(field, reverse, primer) {
-    //     const key = primer
-    //         ? function (x) {
-    //               return primer(x[field]);
-    //           }
-    //         : function (x) {
-    //               return x[field];
-    //           };
-    //           return function (a, b) {
-    //             a = key(a);
-    //             b = key(b);
-    //             return reverse * ((a > b) - (b > a));
-    //         };
-    //     }
-
-        // sortHandler(event) {
-        //     const { fieldName: sortedBy, sortDirection } = event.detail;
-        //     const cloneData = [...this.bookList];
-    
-        //     cloneData.sort(this.sortBy(sortedBy, sortDirection === 'asc' ? 1 : -1));
-        //     this.bookList = cloneData;
-        //     this.sortDirection = sortDirection;
-        //     this.sortedBy = sortedBy;
-        // }
     }
     
-   
-
-    // disconnectedCallback() {
-    //     window.removeEventListener('submit', this.handleFormSubmit);
-    // }

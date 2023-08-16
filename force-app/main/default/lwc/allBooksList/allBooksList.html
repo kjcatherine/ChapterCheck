@@ -1,7 +1,10 @@
+<!-- sldsValidatorIgnore -->
+<!-- sldsValidatorIgnore -->
 <template>
     <lightning-card title="Book List">
-        <div class="slds-p-around_medium">
-            <lightning-datatable
+        <div class="slds-p-around_medium" style="width: auto;">
+            <template if:true={bookList}>
+                <lightning-datatable
                 key-field="id"
                 data={bookList}
                 columns={columns}
@@ -9,8 +12,9 @@
                 sorted-direction={sortDirection}
                 onsort={sortHandler}
                 hide-checkbox-column="true">
-            </lightning-datatable>
-            
+                </lightning-datatable>
+        </template>
         </div>
     </lightning-card>
 </template>
+<!-- onrowaction={handleRowAction} -->
