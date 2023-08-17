@@ -4,7 +4,7 @@ import { APPLICATION_SCOPE, MessageContext, subscribe} from 'lightning/messageSe
 
 const actions = [
     { label: 'Edit', name: 'Edit', iconName: 'utility:edit' },
-    { label: 'Delete', name: 'Delete' },
+    { label: 'Delete', name: 'Delete', iconName: 'utility:delete' },
 ];
 
 const columns = [
@@ -100,6 +100,19 @@ export default class AllBooksList extends LightningElement {
         });
         this.bookList = parseData;
         //[...this.bookList] = parseData;
-    }    
+    }  
+
+    handleRowAction(event) {
+        const action = event.detail.action.name;
+        const row = event.detail.row;
+        if (action === 'delete') {
+            const rowIndex = this.bookList.findIndex(item => item.Id === row.Id);
+            if (rowIndex !== -1) {
+                this.bookList.splice(rowIndex, 1);
+                this.bookList = [...this.bookList];
+            }
+        }
+    }
+
     }
     
