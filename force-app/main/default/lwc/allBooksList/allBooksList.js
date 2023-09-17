@@ -1,6 +1,6 @@
-import { LightningElement, wire, track} from 'lwc';
-import BOOKCHANNEL from '@salesforce/messageChannel/BooksChannel__c'
-import { APPLICATION_SCOPE, MessageContext, subscribe, publish} from 'lightning/messageService'
+import { LightningElement, wire, track } from 'lwc';
+import BOOKCHANNEL from '@salesforce/messageChannel/BooksChannel__c';
+import { APPLICATION_SCOPE, MessageContext, subscribe, publish } from 'lightning/messageService';
 
 const actions = [
     { label: 'Edit', name: 'Edit', iconName: 'utility:edit' },
@@ -8,44 +8,41 @@ const actions = [
 ];
 
 const columns = [
-    { 
-        label: 'Title', 
-        fieldName: 'title', 
+    {
+        label: 'Title',
+        fieldName: 'title',
         sortable: true,
     },
-    { 
-        label: 'Author', 
+    {
+        label: 'Author',
         fieldName: 'author',
         sortable: true,
     },
-    { 
-        label: 'Status', 
+    {
+        label: 'Status',
         fieldName: 'status',
         sortable: true,
     },
     {
         type: 'button-icon',
         initialWidth: 34,
-        typeAttributes:
-        {
+        typeAttributes: {
             iconName: 'utility:delete',
             name: 'delete',
-            iconClass: 'slds-icon-text-error'
-        }
+            iconClass: 'slds-icon-text-error',
+        },
     },
     {
         type: 'button-icon',
         initialWidth: 34,
-        typeAttributes:
-        {
+        typeAttributes: {
             iconName: 'utility:edit',
-            name: 'edit'
-        }
-    }
+            name: 'edit',
+        },
+    },
 ];
 
 export default class AllBooksList extends LightningElement {
-
     columns = columns;
     @track bookList = [];
     @track sortBy;
@@ -53,34 +50,53 @@ export default class AllBooksList extends LightningElement {
     @track selectedRowData = {};
     @track isEditing = false;
 
-    
-    // bookList = []
-    subscription
-    // sortDirection
-    // sortedBy
-    
     @wire(MessageContext)
-    context
+    context;
 
     connectedCallback() {
-        this.handleFormSubmit()
+        this.handleFormSubmit();
     }
 
     handleFormSubmit() {
-        this.subscription = subscribe(this.context, BOOKCHANNEL, (message)=>{this.handleFormMessage(message)}, {scope:APPLICATION_SCOPE})
+        this.subscription = subscribe(this.context, BOOKCHANNEL, (message) => {
+            this.handleFormMessage(message);
+        }, { scope: APPLICATION_SCOPE });
     }
 
-    handleFormMessage(message){
+    handleFormMessage(message) {
         if (message) {
-            const { title, author, status} = message.lmsData;
-            
-            this.bookList.push({
-                id: Date.now(),
-                title: title.value || '',
-                author: author.value || '',
-                status: status.value || '',
-            });
-            this.bookList = [...this.bookList];
+            const { id, title, author, status } = message.lmsData;
+
+            if (id) {
+                // Update existing row
+                this.updateRow(id, title.value, author.value, status.value);
+            } else {
+                // Add a new row
+                this.addNewRow(title.value, author.value, status.value);
+            }
+        }
+    }
+
+    addNewRow(title, author, status) {
+        this.bookList.push({
+            id: Date.now(),
+            title: title || '',
+            author: author || '',
+            status: status || 'Not Read',
+        });
+        this.bookList = [...this.bookList];
+    }
+
+    updateRow(id, title, author, status) {
+        const rowIndex = this.bookList.findIndex((item) => item.id === id);
+        if (rowIndex !== -1) {
+            this.bookList[rowIndex] = {
+                ...this.bookList[rowIndex],
+                title: title || '',
+                author: author || '',
+                status: status || 'Not Read',
+            };
+            this.bookList = [...this.bookList]; // Update the bookList to trigger the rerender
         }
     }
 
@@ -92,34 +108,17 @@ export default class AllBooksList extends LightningElement {
 
     sortData(fieldname, direction) {
         let parseData = JSON.parse(JSON.stringify(this.bookList));
-        // Return the value stored in the field
         let keyValue = (a) => {
             return a[fieldname];
         };
-        // cheking reverse direction
-        let isReverse = direction === 'asc' ? 1: -1;
-        // sorting data
+        let isReverse = direction === 'asc' ? 1 : -1;
         parseData.sort((x, y) => {
-            x = keyValue(x) ? keyValue(x) : ''; // handling null values
+            x = keyValue(x) ? keyValue(x) : '';
             y = keyValue(y) ? keyValue(y) : '';
-            // sorting values based on direction
             return isReverse * ((x > y) - (y > x));
         });
         this.bookList = parseData;
-        //[...this.bookList] = parseData;
-    }  
-
-    // handleRowAction(event) {
-    //     const action = event.detail.action.name;
-    //     const row = event.detail.row;
-    //     if (action === 'delete') {
-    //         const rowIndex = this.bookList.findIndex(item => item.Id === row.Id);
-    //         if (rowIndex !== -1) {
-    //             this.bookList.splice(rowIndex, 1);
-    //             this.bookList = [...this.bookList];
-    //         }
-    //     }
-    // }
+    }
 
     handleRowAction(event) {
         const action = event.detail.action.name;
@@ -128,15 +127,19 @@ export default class AllBooksList extends LightningElement {
         if (action === 'delete') {
             this.deleteRow(row);
         } else if (action === 'edit') {
-            // Publish the selected row data to the form component
+            console.log('Edit button clicked');
+            this.isEditing = true;
+            // Publish the selected row data to the form component for editing
             const message = {
                 lmsData: {
+                    id: row.id,
                     title: { value: row.title },
                     author: { value: row.author },
-                    status: { value: row.status }
-                }
+                    status: { value: row.status },
+                },
             };
             publish(this.context, BOOKCHANNEL, message);
+            this.selectedRowData = row;
         }
     }
 
@@ -147,27 +150,4 @@ export default class AllBooksList extends LightningElement {
             this.bookList = [...this.bookList];
         }
     }
-
-    editRow(rowToEdit) {
-        // Pass the selected row data to the form component
-        this.selectedRowData = rowToEdit;
-        this.isEditing = true;
-    }
-    
-    // Handle the save and cancel events from the form component
-    handleSave(event) {
-        const editedData = event.detail;
-        const rowIndex = this.bookList.findIndex((item) => item.id === this.selectedRowData.id);
-        if (rowIndex !== -1) {
-            this.bookList[rowIndex] = editedData;
-            this.bookList = [...this.bookList];
-        }
-        this.isEditing = false;
-    }
-
-    handleCancel() {
-        this.isEditing = false;
-    }
-    
-    }
-    
+}
